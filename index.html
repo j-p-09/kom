@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem VPISOV</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .hidden { display: none; }
+    .menu { background: #333; color: white; padding: 10px; display: flex; gap: 20px; }
+    .menu button { background: none; border: none; color: white; cursor: pointer; font-size: 16px; }
+    .form-group { margin: 10px 0; }
+    .green { background-color: #d4edda; }
+    .red { background-color: #f8d7da; }
+    .container { padding: 20px; }
+    textarea { width: 100%; height: 200px; margin: 10px 0; }
+    .dialog { background: #f8d7da; padding: 10px; border: 1px solid #f5c2c7; }
+    .record { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Prijava -->
+  <div id="login">
+    <div class="container">
+      <h2>Prijava</h2>
+      <input id="username" placeholder="Uporabniško ime" />
+      <input id="password" placeholder="Geslo" type="password" />
+      <button onclick="login()">Prijava</button>
+    </div>
+  </div>
+
+  <!-- Meni -->
+  <div id="menu" class="menu hidden">
+    <button onclick="showSection('vpis')">VPIŠI</button>
+    <button onclick="showSection('poglej')">POGLEJ</button>
+    <button onclick="showSection('dodaj')">DODAJ</button>
+    <button onclick="logout()">ODJAVA</button>
+  </div>
+
+  <!-- Vpis -->
+  <div id="vpis" class="container hidden">
+    <h3>Vpis</h3>
+    <div class="form-group">
+      <input id="vpis-ime" placeholder="Ime" />
+      <input id="vpis-zacetnica" placeholder="Začetnica priimka" />
+      <button onclick="preveriOsebo('vpis')">Preveri</button>
+    </div>
+    <div id="vpis-dialog" class="dialog hidden"></div>
+    <textarea id="vpis-zapis" placeholder="Vsebina zapisa..."></textarea>
+    <button onclick="shraniVpis()">Shrani</button>
+    <button onclick="resetVpis()">Prekliči</button>
+  </div>
+
+  <!-- Poglej -->
+  <div id="poglej" class="container hidden">
+    <h3>Poglej zapise</h3>
+    <div class="form-group">
+      <input id="poglej-ime" placeholder="Ime" />
+      <input id="poglej-zacetnica" placeholder="Začetnica priimka" />
+      <button onclick="preveriOsebo('poglej')">Preveri</button>
+    </div>
+    <div id="poglej-dialog" class="dialog hidden"></div>
+    <div id="zapisi"></div>
+  </div>
+
+  <!-- Dodaj -->
+  <div id="dodaj" class="container hidden">
+    <h3>Vse osebe</h3>
+    <ul id="seznam-oseb"></ul>
+  </div>
+
+<script>
+const USER = "PJasa";
+const PASS = "JP09";
+
+function login() {
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
+  if (u === USER && p === PASS) {
+    localStorage.setItem("loggedIn", "true");
+    updateUI();
+    showSection('vpis');
+  } else {
+    alert("Napačno uporabniško ime ali geslo");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("loggedIn");
+  updateUI();
+}
+
+function updateUI() {
+  const loggedIn = localStorage.getItem("loggedIn") === "true";
+  document.getElementById("login").classList.toggle("hidden", loggedIn);
+  document.getElementById("menu").classList.toggle("hidden", !loggedIn);
+  if (!loggedIn) {
+    document.querySelectorAll(".container").forEach(el => el.classList.add("hidden"));
+  }
+}
+
+document.addEventListener("DOMContentLoaded", updateUI);
+
+function showSection(id) {
+  document.querySelectorAll(".container").forEach(el => el.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  if (id === 'dodaj') prikaziOsebe();
+}
+
+function getKey(ime, z) {
+  return ime.trim().toLowerCase() + "-" + z.trim().toLowerCase();
+}
+
+function preveriOsebo(kje) {
+  const ime = document.getElementById(`${kje}-ime`).value;
+  const z = document.getElementById(`${kje}-zacetnica`).value;
+  const key = getKey(ime, z);
+  const oseba = JSON.parse(localStorage.getItem("osebe") || "{}");
+
+  const dialog = document.getElementById(`${kje}-dialog`);
+  dialog.classList.add("hidden");
+  if (oseba[key]) {
+    document.getElementById(`${kje}-ime`).classList.add("green");
+    document.getElementById(`${kje}-zacetnica`).classList.add("green");
+    if (kje === 'poglej') prikaziZapise(key);
+  } else {
+    if (kje === 'vpis') {
+      if (confirm("Oseba ni v sistemu. Dodati?")) {
+        oseba[key] = { ime, z, zapisi: [] };
+        localStorage.setItem("osebe", JSON.stringify(oseba));
+        alert("Oseba dodana.");
+      }
+    } else {
+      dialog.textContent = "Oseba ni v sistemu.";
+      dialog.classList.remove("hidden");
+    }
+  }
+}
+
+function shraniVpis() {
+  const ime = document.getElementById("vpis-ime").value;
+  const z = document.getElementById("vpis-zacetnica").value;
+  const zapis = document.getElementById("vpis-zapis").value;
+  const key = getKey(ime, z);
+  const osebe = JSON.parse(localStorage.getItem("osebe") || "{}");
+
+  if (!osebe[key]) return alert("Oseba ni v sistemu.");
+
+  const novZapis = {
+    datum: new Date().toLocaleDateString(),
+    vsebina: zapis,
+    vpisal: USER
+  };
+  osebe[key].zapisi.push(novZapis);
+  localStorage.setItem("osebe", JSON.stringify(osebe));
+  resetVpis();
+  alert("Zapis shranjen.");
+}
+
+function resetVpis() {
+  ["vpis-ime", "vpis-zacetnica", "vpis-zapis"].forEach(id => {
+    document.getElementById(id).value = "";
+    document.getElementById(id).classList.remove("green");
+  });
+}
+
+function prikaziZapise(key) {
+  const osebe = JSON.parse(localStorage.getItem("osebe") || "{}");
+  const zapisi = osebe[key]?.zapisi || [];
+  const div = document.getElementById("zapisi");
+  div.innerHTML = "";
+
+  zapisi.forEach((z, i) => {
+    const el = document.createElement("div");
+    el.className = "record";
+    el.innerHTML = `<b>${z.datum}</b> - ${z.vpisal}<br>
+      <button onclick="prenesiPDF('${key}', ${i})">PRENESI</button>
+      <button onclick="alert(\"${z.vsebina.replaceAll('\n', ' ')}\")">POGLEJ</button>`;
+    div.appendChild(el);
+  });
+}
+
+function prikaziOsebe() {
+  const osebe = JSON.parse(localStorage.getItem("osebe") || "{}");
+  const seznam = document.getElementById("seznam-oseb");
+  seznam.innerHTML = "";
+  Object.values(osebe).forEach(o => {
+    const li = document.createElement("li");
+    li.textContent = `${o.ime} ${o.z}.`;
+    seznam.appendChild(li);
+  });
+}
+
+function prenesiPDF(key, index) {
+  const osebe = JSON.parse(localStorage.getItem("osebe") || "{}");
+  const zapis = osebe[key].zapisi[index];
+  const content = `Z\tA\tP\tI\tS\n\nDatum vpisa: ${zapis.datum}\n\nZapis vezan na: ${key.replace('-', ' ')}\n\n${zapis.vsebina}\n\n\nVpisal: ${zapis.vpisal}`;
+  const blob = new Blob([content], { type: 'application/pdf' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `zapis-${key}-${index + 1}.pdf`;
+  link.click();
+}
+</script>
+
+</body>
+</html>
