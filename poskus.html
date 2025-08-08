@@ -4,48 +4,170 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Sistem zapisov</title>
-
-<!-- jsPDF CDN za generiranje PDF (uporabniško prispevek) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-  :root{font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  body{margin:0;background:#f6f7fb;color:#111}
-  .topbar{background:#1f2937;color:white;padding:10px 16px;display:flex;align-items:center;gap:12px}
-  .brand{font-weight:700}
-  .menu{margin-left:12px;display:flex;gap:8px}
-  .menu button{background:transparent;border:1px solid rgba(255,255,255,0.15);color:white;padding:6px 12px;border-radius:6px;cursor:pointer}
-  .menu button.active{background:white;color:#111}
-  .container{padding:18px;max-width:900px;margin:18px auto;background:white;border-radius:8px;box-shadow:0 6px 18px rgba(20,20,40,0.06)}
-  .login-box{max-width:420px;margin:80px auto;padding:22px;border-radius:10px;background:white;box-shadow:0 6px 24px rgba(0,0,0,0.06)}
-  .field{display:flex;flex-direction:column;margin-bottom:12px}
-  label{font-size:13px;margin-bottom:6px;color:#333}
-  input[type="text"], input[type="password"], textarea{padding:10px;border:1px solid #cfcfcf;border-radius:6px;font-size:14px}
-  .inline-row{display:flex;gap:10px;align-items:center}
-  .inline-row input{flex:1}
-  .found{background:#e6fff0;border-color:#6ee7a7}
-  textarea.big{height:220px;resize:vertical;white-space:pre-wrap}
-  .btn{padding:8px 12px;border-radius:6px;border:none;cursor:pointer}
-  .btn.primary{background:#0f5132;color:white}
-  .btn.ghost{background:#efefef}
-  .records-list{margin-top:12px;border-top:1px dashed #ddd;padding-top:12px}
-  .record{border:1px solid #eee;padding:10px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-  .small{font-size:13px;color:#555}
-  .person-list{display:flex;flex-wrap:wrap;gap:8px}
-  .person-card{padding:8px 10px;border-radius:6px;background:#f3f4f6;border:1px solid #eaeaef;cursor:pointer}
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:999}
-  .modal .panel{background:white;padding:16px;border-radius:8px;max-width:760px;width:95%}
-  .top-actions{margin-left:auto;display:flex;gap:8px}
-  .hidden{display:none}
-  footer{font-size:13px;color:#666;padding:12px;text-align:center}
+:root{
+  font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+}
+body{
+  margin:0;
+  background:#f6f7fb;
+  color:#111;
+}
+.topbar{
+  background:#1f2937;
+  color:white;
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.brand{font-weight:700}
+.menu{
+  margin-left:12px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.menu button{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.15);
+  color:white;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+.menu button.active{
+  background:white;
+  color:#111;
+}
+.container{
+  padding:18px;
+  max-width:900px;
+  margin:18px auto;
+  background:white;
+  border-radius:8px;
+  box-shadow:0 6px 18px rgba(20,20,40,0.06);
+}
+.login-box{
+  max-width:420px;
+  margin:80px auto;
+  padding:22px;
+  border-radius:10px;
+  background:white;
+  box-shadow:0 6px 24px rgba(0,0,0,0.06);
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:12px;
+}
+label{
+  font-size:13px;
+  margin-bottom:6px;
+  color:#333;
+}
+input[type="text"], input[type="password"], textarea{
+  padding:10px;
+  border:1px solid #cfcfcf;
+  border-radius:6px;
+  font-size:14px;
+}
+.inline-row{
+  display:flex;
+  gap:6px;
+  align-items:flex-start;
+}
+.inline-row input{
+  flex:1;
+}
+.found{
+  background:#e6fff0;
+  border-color:#6ee7a7 !important;
+}
+textarea.big{
+  height:220px;
+  resize:vertical;
+  white-space:pre-wrap;
+  width:100%;
+}
+.btn{
+  padding:8px 12px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+}
+.btn.primary{
+  background:#0f5132;
+  color:white;
+}
+.btn.ghost{
+  background:#efefef;
+}
+.records-list{
+  margin-top:12px;
+  border-top:1px dashed #ddd;
+  padding-top:12px;
+}
+.record{
+  border:1px solid #eee;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:8px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+}
+.small{font-size:13px;color:#555}
+.person-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.person-card{
+  padding:8px 10px;
+  border-radius:6px;
+  background:#f3f4f6;
+  border:1px solid #eaeaef;
+  cursor:pointer;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999
+}
+.modal .panel{
+  background:white;
+  padding:16px;
+  border-radius:8px;
+  max-width:760px;
+  width:95%;
+}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.hidden{display:none}
+footer{
+  font-size:13px;
+  color:#666;
+  padding:12px;
+  text-align:center;
+}
+@media (max-width:600px){
+  .inline-row{flex-direction:column}
+}
 </style>
 </head>
 <body>
 
-<!-- Top bar (hidden until login) -->
 <div id="topbar" class="topbar hidden">
   <div class="brand">Sistem zapisov</div>
-  <div class="menu" role="menu">
+  <div class="menu">
     <button id="nav-vpisi">VPIŠI</button>
     <button id="nav-poglej">POGLEJ</button>
     <button id="nav-dodaj">DODAJ</button>
@@ -56,27 +178,18 @@
   </div>
 </div>
 
-<!-- Main container -->
 <div id="main" class="container hidden">
-  <!-- Vsebina strani se prikazuje tukaj -->
   <div id="page-vpisi" class="page hidden">
     <h2>VPIŠI</h2>
-    <div class="inline-row" style="margin-top:8px">
-      <div style="flex:1">
-        <label>IME</label>
-        <input type="text" id="vp-ime" placeholder="Vnesi ime">
-      </div>
-      <div style="width:140px">
-        <label>Začetnica priimka</label>
-        <input type="text" id="vp-zn" maxlength="1" placeholder="Z">
-      </div>
+    <label>IME in začetnica priimka</label>
+    <div class="inline-row">
+      <input type="text" id="vp-ime" placeholder="Ime">
+      <input type="text" id="vp-zn" maxlength="1" placeholder="Z">
     </div>
-
     <div style="margin-top:12px">
       <label>Vsebina zapisa</label>
       <textarea id="vp-content" class="big" placeholder="Tu vpiši zapis..."></textarea>
     </div>
-
     <div style="margin-top:12px;display:flex;gap:8px">
       <button id="vp-save" class="btn primary">Shrani</button>
       <button id="vp-cancel" class="btn ghost">Prekliči</button>
@@ -85,21 +198,14 @@
 
   <div id="page-poglej" class="page hidden">
     <h2>POGLEJ</h2>
-    <div class="inline-row" style="margin-top:8px">
-      <div style="flex:1">
-        <label>IME</label>
-        <input type="text" id="pg-ime" placeholder="Vnesi ime">
-      </div>
-      <div style="width:140px">
-        <label>Začetnica priimka</label>
-        <input type="text" id="pg-zn" maxlength="1" placeholder="Z">
-      </div>
-      <div style="margin-left:8px">
-        <label>&nbsp;</label>
-        <button id="pg-search" class="btn">Išči</button>
-      </div>
+    <label>IME in začetnica priimka</label>
+    <div class="inline-row">
+      <input type="text" id="pg-ime" placeholder="Ime">
+      <input type="text" id="pg-zn" maxlength="1" placeholder="Z">
     </div>
-
+    <div style="margin-top:8px">
+      <button id="pg-search" class="btn">Išči</button>
+    </div>
     <div id="pg-results" class="records-list"></div>
   </div>
 
@@ -109,7 +215,6 @@
   </div>
 </div>
 
-<!-- Login box -->
 <div id="login" class="login-box container" style="display:block;max-width:480px;">
   <h2>Prijava</h2>
   <div class="field">
@@ -126,7 +231,6 @@
   </div>
 </div>
 
-<!-- Modal (for viewing records) -->
 <div id="modal" class="modal hidden" aria-hidden="true">
   <div class="panel">
     <div style="display:flex;align-items:center;justify-content:space-between">
@@ -137,70 +241,53 @@
   </div>
 </div>
 
-<footer style="margin-top:18px">Sistem zapisov — lokalno (shranjeno v localStorage)</footer>
+<footer>Sistem zapisov — lokalno (shranjeno v localStorage)</footer>
 
 <script>
-/*
-  Sistem zapisov
-  - Prijava: PJasa / JP09
-  - Shranjevanje oseb in zapisov v localStorage
-  - Generiranje PDF z jsPDF
-*/
-
 const VALID_USER = { username: 'PJasa', password: 'JP09' };
 let currentUser = null;
 
-/* --- Local storage helpers --- */
 function loadData(){
-  const people = JSON.parse(localStorage.getItem('zapis_people') || '[]');
-  const records = JSON.parse(localStorage.getItem('zapis_records') || '[]');
-  return { people, records };
+  return {
+    people: JSON.parse(localStorage.getItem('zapis_people') || '[]'),
+    records: JSON.parse(localStorage.getItem('zapis_records') || '[]')
+  };
 }
 function saveData(people, records){
   localStorage.setItem('zapis_people', JSON.stringify(people));
   localStorage.setItem('zapis_records', JSON.stringify(records));
 }
-
-/* --- Utilities --- */
 function normalizeName(name){ return name.trim(); }
 function findPerson(name, zn){
   const { people } = loadData();
   return people.find(p => p.name.toLowerCase() === name.toLowerCase() && p.zn.toLowerCase() === zn.toLowerCase());
 }
 
-/* --- UI elements --- */
 const topbar = document.getElementById('topbar');
 const main = document.getElementById('main');
 const loginBox = document.getElementById('login');
-
 const navVp = document.getElementById('nav-vpisi');
 const navPg = document.getElementById('nav-poglej');
 const navDod = document.getElementById('nav-dodaj');
 const navOdj = document.getElementById('nav-odjava');
 const loggedAs = document.getElementById('loggedAs');
-
 const pageVp = document.getElementById('page-vpisi');
 const pagePg = document.getElementById('page-poglej');
 const pageDod = document.getElementById('page-dodaj');
-
 const vpIme = document.getElementById('vp-ime');
 const vpZn = document.getElementById('vp-zn');
 const vpContent = document.getElementById('vp-content');
 const vpSave = document.getElementById('vp-save');
 const vpCancel = document.getElementById('vp-cancel');
-
 const pgIme = document.getElementById('pg-ime');
 const pgZn = document.getElementById('pg-zn');
 const pgSearch = document.getElementById('pg-search');
 const pgResults = document.getElementById('pg-results');
-
 const personsDiv = document.getElementById('persons');
-
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
 const modalClose = document.getElementById('modal-close');
 
-/* --- Login flow --- */
 document.getElementById('btn-login').addEventListener('click', ()=>{
   const user = document.getElementById('login-user').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
@@ -209,7 +296,6 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
     loginBox.style.display = 'none';
     topbar.classList.remove('hidden');
     main.classList.remove('hidden');
-    document.getElementById('topbar').classList.remove('hidden');
     loggedAs.textContent = `Prijavljen kot: ${currentUser}`;
     showPage('vpisi');
     refreshPersons();
@@ -217,11 +303,10 @@ document.getElementById('btn-login').addEventListener('click', ()=>{
     alert('Nepravilno uporabniško ime ali geslo.');
   }
 });
-
 navVp.addEventListener('click', ()=>showPage('vpisi'));
 navPg.addEventListener('click', ()=>showPage('poglej'));
 navDod.addEventListener('click', ()=>showPage('dodaj'));
-navOdj.addEventListener('click', ()=>{ logout(); });
+navOdj.addEventListener('click', ()=>logout());
 
 function logout(){
   currentUser = null;
@@ -231,8 +316,6 @@ function logout(){
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
 }
-
-/* --- Page switching --- */
 function showPage(page){
   pageVp.classList.add('hidden'); pagePg.classList.add('hidden'); pageDod.classList.add('hidden');
   navVp.classList.remove('active'); navPg.classList.remove('active'); navDod.classList.remove('active');
@@ -241,25 +324,17 @@ function showPage(page){
   if(page==='dodaj'){ pageDod.classList.remove('hidden'); navDod.classList.add('active'); refreshPersons(); }
 }
 
-/* --- VPIŠI behavior --- */
-// live check: when name or zn changes, check existance
-vpIme.addEventListener('input', checkVpPerson);
-vpZn.addEventListener('input', checkVpPerson);
-
 function checkVpPerson(){
   const name = normalizeName(vpIme.value);
   const zn = normalizeName(vpZn.value);
-  if(!name || !zn) {
-    vpIme.classList.remove('found'); vpZn.classList.remove('found'); return;
-  }
+  vpIme.classList.remove('found'); vpZn.classList.remove('found');
+  if(!name || !zn) return;
   if(findPerson(name, zn)){
     vpIme.classList.add('found'); vpZn.classList.add('found');
-  } else {
-    // not found -> ask to confirm adding new person
-    vpIme.classList.remove('found'); vpZn.classList.remove('found');
-    // Only prompt once per input change to avoid spam: use confirm if user tries to save.
   }
 }
+vpIme.addEventListener('input', checkVpPerson);
+vpZn.addEventListener('input', checkVpPerson);
 
 vpSave.addEventListener('click', ()=>{
   const name = normalizeName(vpIme.value);
@@ -272,9 +347,7 @@ vpSave.addEventListener('click', ()=>{
   let { people, records } = loadData();
   let person = findPerson(name, zn);
   if(!person){
-    const add = confirm(`Oseba "${name} ${zn}." ni v sistemu. Potrdi vpis nove osebe?`);
-    if(!add) return;
-    // add person
+    if(!confirm(`Oseba "${name} ${zn}." ni v sistemu. Potrdi vpis nove osebe?`)) return;
     person = { name, zn };
     people.push(person);
     saveData(people, records);
@@ -283,30 +356,17 @@ vpSave.addEventListener('click', ()=>{
   } else {
     vpIme.classList.add('found'); vpZn.classList.add('found');
   }
-  if(!content){
-    if(!confirm('Nisi vnesel vsebine - želiš vseeno shraniti prazen zapis?')) return;
-  }
   const now = new Date().toISOString();
-  const record = {
-    id: 'r_' + Date.now(),
-    personName: name,
-    zn,
-    date: now,
-    enteredBy: currentUser || VALID_USER.username,
-    content
-  };
+  const record = { id: 'r_' + Date.now(), personName: name, zn, date: now, enteredBy: currentUser, content };
   records.push(record);
   saveData(people, records);
   alert('Zapis shranjen.');
-  // reset fields and go to POGLEJ (po želji)
   vpIme.value=''; vpZn.value=''; vpContent.value='';
   vpIme.classList.remove('found'); vpZn.classList.remove('found');
-  // optionally navigate to POGLEJ to see saved record
   showPage('poglej');
   pgIme.value = name; pgZn.value = zn;
   pgSearch.click();
 });
-
 vpCancel.addEventListener('click', ()=>{
   if(confirm('Želiš preklicati — vsi vnosi bodo izbrisani iz polj?')) {
     vpIme.value=''; vpZn.value=''; vpContent.value='';
@@ -314,7 +374,18 @@ vpCancel.addEventListener('click', ()=>{
   }
 });
 
-/* --- POGLEJ behavior --- */
+function checkPgPerson(){
+  const name = normalizeName(pgIme.value);
+  const zn = normalizeName(pgZn.value);
+  pgIme.classList.remove('found'); pgZn.classList.remove('found');
+  if(!name || !zn) return;
+  if(findPerson(name, zn)){
+    pgIme.classList.add('found'); pgZn.classList.add('found');
+  }
+}
+pgIme.addEventListener('input', checkPgPerson);
+pgZn.addEventListener('input', checkPgPerson);
+
 pgSearch.addEventListener('click', ()=>{
   const name = normalizeName(pgIme.value);
   const zn = normalizeName(pgZn.value);
@@ -325,7 +396,6 @@ pgSearch.addEventListener('click', ()=>{
     alert('Oseba ni v sistemu. (TUKAJ NE MORAŠ DODATI OSEBE)');
     return;
   }
-  // person exists -> show all records
   const { records } = loadData();
   const their = records.filter(r => r.personName.toLowerCase()===name.toLowerCase() && r.zn.toLowerCase()===zn.toLowerCase())
                        .sort((a,b)=>b.date.localeCompare(a.date));
@@ -348,7 +418,6 @@ pgSearch.addEventListener('click', ()=>{
   });
 });
 
-/* --- DODAJ (seznam oseb) --- */
 function refreshPersons(){
   const { people } = loadData();
   personsDiv.innerHTML = '';
@@ -360,7 +429,6 @@ function refreshPersons(){
     const el = document.createElement('div'); el.className='person-card';
     el.innerHTML = `<strong>${p.name}</strong> ${p.zn}.`;
     el.addEventListener('click', ()=>{
-      // on click, go to POGLEJ for that person
       showPage('poglej');
       pgIme.value = p.name; pgZn.value = p.zn;
       pgSearch.click();
@@ -369,7 +437,6 @@ function refreshPersons(){
   });
 }
 
-/* --- Modal --- */
 function openModal(record){
   modalBody.textContent = '';
   const dateStr = new Date(record.date).toLocaleString();
@@ -382,50 +449,35 @@ function openModal(record){
 }
 modalClose.addEventListener('click', ()=>{ modal.classList.add('hidden'); modal.setAttribute('aria-hidden','true'); });
 
-/* --- PDF generation using jsPDF --- */
 async function generatePDF(record){
-  // Uses jsPDF to generate PDF matching template from the uploaded doc (ZAPIS template).
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({unit:'pt', format:'a4'});
   const margin = 40;
   const pageWidth = doc.internal.pageSize.getWidth();
   const usableWidth = pageWidth - margin*2;
-
-  // header
   doc.setFontSize(18);
   doc.text('Z A P I S', margin, 60);
-
   doc.setFontSize(11);
   doc.text(`Datum vpisa: ${new Date(record.date).toLocaleDateString()}`, margin, 90);
   doc.text('Zapis vezan na:', margin, 110);
   doc.text(`[${new Date(record.date).toLocaleDateString()}]`, margin+110, 110);
   doc.text(`[${record.personName} ${record.zn}.]`, margin+110, 130);
-
-  // Draw big rectangle for content
   const boxTop = 150;
   const boxLeft = margin;
   const boxWidth = usableWidth;
   const boxHeight = 520;
-
-  doc.rect(boxLeft, boxTop, boxWidth, boxHeight); // big box
-
-  // Insert content inside box with wrapping, add pages if necessary
+  doc.rect(boxLeft, boxTop, boxWidth, boxHeight);
   doc.setFontSize(12);
   const lineHeight = 14;
   const textX = boxLeft + 8;
   let textY = boxTop + 16;
   const maxLineWidth = boxWidth - 16;
-
-  // Split content into lines
   const contentLines = doc.splitTextToSize(record.content || '(brez vsebine)', maxLineWidth);
   for(let i=0;i<contentLines.length;i++){
     if(textY + lineHeight > boxTop + boxHeight - 40){
-      // add signature at bottom of this page (for that page)
       doc.text('__________________________________', boxLeft + 8, boxTop + boxHeight - 18);
       doc.text(`Vpisal: ${record.enteredBy}`, boxLeft + 8, boxTop + boxHeight - 4);
       doc.addPage();
-      // redraw title on new page? (not necessary per predloga, but keep content in big box)
-      // draw another box
       const newBoxTop = 80;
       doc.rect(boxLeft, newBoxTop, boxWidth, boxHeight);
       textY = newBoxTop + 16;
@@ -433,28 +485,17 @@ async function generatePDF(record){
     doc.text(contentLines[i], textX, textY);
     textY += lineHeight;
   }
-
-  // signature at the end of content block on last page
-  // if last used page has enough space to place signature inside box
   doc.text('__________________________________', boxLeft + 8, Math.min(textY + 24, (boxTop + boxHeight - 18)));
-  doc.text(`Vpisal: ${record.enteredBy}`, boxLeft + 8, Math.min(textY + 24 + 14, (boxTop + boxHeight - 4)));
-
-  // File name
+  doc.text(`Vpisal: ${record.enteredBy}`, boxLeft + 8, Math.min(textY + 38, (boxTop + boxHeight - 4)));
   const fileName = `ZAPIS_${record.personName}_${record.zn}_${(new Date(record.date)).toISOString().slice(0,10)}.pdf`;
   doc.save(fileName);
 }
 
-/* --- Initialize: if data absent, create empty arrays --- */
 (function initStorageIfMissing(){
-  const existsPeople = localStorage.getItem('zapis_people');
-  if(!existsPeople) localStorage.setItem('zapis_people', JSON.stringify([]));
-  const existsRecords = localStorage.getItem('zapis_records');
-  if(!existsRecords) localStorage.setItem('zapis_records', JSON.stringify([]));
+  if(!localStorage.getItem('zapis_people')) localStorage.setItem('zapis_people', JSON.stringify([]));
+  if(!localStorage.getItem('zapis_records')) localStorage.setItem('zapis_records', JSON.stringify([]));
 })();
-
-/* --- Helper: show page VPIŠI by default after login --- */
 showPage('vpisi');
-
 </script>
 </body>
 </html>
